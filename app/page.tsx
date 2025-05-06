@@ -1,10 +1,7 @@
-import AnaliseEnergetica from "@/analise-energetica"
+"use client"
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-8">
-      <AnaliseEnergetica />
-    </main>
-  )
+import AnaliseEnergetica from "../analise-energetica"
+
+export default function Page() {
+  return <AnaliseEnergetica />
 }
-
