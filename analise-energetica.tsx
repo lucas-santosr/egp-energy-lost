@@ -495,7 +495,7 @@ export default function AnaliseEnergetica() {
   const [dataFim, setDataFim] = useState(null)
   const [complexoSelecionado, setComplexoSelecionado] = useState("todos")
   const [filtroPersonalizado, setFiltroPersonalizado] = useState(false)
-  
+
   // Estado para debug
   const [debugInfo, setDebugInfo] = useState("")
 
@@ -542,7 +542,7 @@ export default function AnaliseEnergetica() {
         const dataInicioFormatada = format(dataInicio, "dd/MM/yyyy", { locale: ptBR })
         const dataFimFormatada = format(dataFim, "dd/MM/yyyy", { locale: ptBR })
         setPeriodoTexto(`${dataInicioFormatada} a ${dataFimFormatada}`)
-        
+
         console.log("Aplicando filtro personalizado...")
         // Filtrar por período personalizado
         dadosFiltradosPorData = filtrarPorPeriodoPersonalizado(chartData, dataInicio, dataFim)
@@ -562,7 +562,7 @@ export default function AnaliseEnergetica() {
 
     console.log("=== RESULTADO FINAL DA FILTRAGEM ===")
     console.log("Total de complexos após filtro:", dadosFiltradosFinal.length)
-    dadosFiltradosFinal.forEach(complexo => {
+    dadosFiltradosFinal.forEach((complexo) => {
       console.log(`${complexo.complexo}: ${complexo.registros ? complexo.registros.length : 0} registros`)
     })
 
@@ -609,10 +609,10 @@ export default function AnaliseEnergetica() {
         }
 
         const dataRegComparacao = formatarDataParaComparacao(dataRegObj)
-        
+
         // Verificar se a data do registro está dentro do intervalo
         const dentroDoIntervalo = dataRegComparacao >= dataInicioComparacao && dataRegComparacao <= dataFimComparacao
-        
+
         if (dentroDoIntervalo) {
           console.log(`✓ Registro incluído - Data: ${reg.dinInstante} (${dataRegComparacao})`)
         } else {
@@ -678,13 +678,13 @@ export default function AnaliseEnergetica() {
       } else {
         registrosFiltrados = complexo.registros.filter((reg) => {
           if (!reg.dinInstante) return false
-          
+
           // Converter a data do registro para o formato de comparação
           const dataRegObj = parseDate(reg.dinInstante)
           if (!dataRegObj) return false
-          
+
           const dataRegComparacao = formatarDataParaComparacao(dataRegObj)
-          
+
           if (filtro === "hoje") {
             return dataRegComparacao === hojeComparacao
           } else if (filtro === "ontem") {
@@ -694,7 +694,7 @@ export default function AnaliseEnergetica() {
           } else if (filtro === "mes-anterior") {
             return dataRegComparacao >= inicioMesAnteriorComparacao && dataRegComparacao <= fimMesAnteriorComparacao
           }
-          
+
           return false
         })
       }
@@ -795,18 +795,18 @@ export default function AnaliseEnergetica() {
         // Processar os dados
         const processedData = processExcelData(jsonData)
         console.log("Dados processados:", processedData)
-        
+
         // Mostrar informações de debug sobre as datas
         // Atualizar a parte onde mostra informações de debug sobre as datas
-        const debugDates = processedData.flatMap(complexo => 
-          complexo.registros.slice(0, 3).map(reg => ({
+        const debugDates = processedData.flatMap((complexo) =>
+          complexo.registros.slice(0, 3).map((reg) => ({
             complexo: complexo.complexo,
             dinInstante: reg.dinInstante,
-            dataConvertida: reg.dataSimplificada || formatarDataParaComparacao(reg.dinInstante)
-          }))
+            dataConvertida: reg.dataSimplificada || formatarDataParaComparacao(reg.dinInstante),
+          })),
         )
         setDebugInfo(`Primeiras datas: ${JSON.stringify(debugDates, null, 2)}`)
-        
+
         setChartData(processedData)
         alert("Dados importados com sucesso!")
       } catch (error) {
@@ -855,7 +855,7 @@ export default function AnaliseEnergetica() {
       const html2canvas = (await import("html2canvas")).default
 
       // Configurações para garantir qualidade e fidelidade da imagem
-      const canvas = await await html2canvas(chartContainerRef.current, {
+      const canvas = await html2canvas(chartContainerRef.current, {
         scale: 2, // Aumenta a resolução
         useCORS: true,
         logging: false,
@@ -908,11 +908,6 @@ export default function AnaliseEnergetica() {
     }
   }
 
-  // Atualizar a função calcularDominioY para usar os novos utilitários
-  // Substituir as funções de arredondamento por:
-  const arredondarParaCima = (valor) => arredondarParaMultiplo(valor, 1000, 'cima')
-  const arredondarParaBaixo = (valor) => arredondarParaMultiplo(Math.abs(valor), 1000, 'baixo') * (valor < 0 ? -1 : 1)
-
   // Função para calcular o domínio do eixo Y com base nos dados
   const calcularDominioY = (dados) => {
     if (!dados || dados.length === 0) return [0, 0]
@@ -926,7 +921,11 @@ export default function AnaliseEnergetica() {
       maxPositivo = Math.max(maxPositivo, parseNumber(item.energiaPotencial), parseNumber(item.energiaGerada))
 
       // Valores negativos (perdas)
-      minNegativo = Math.min(minNegativo, parseNumber(item.perdaEnergeticaAjustada), parseNumber(item.perdaEnergeticaLimitacoesONS))
+      minNegativo = Math.min(
+        minNegativo,
+        parseNumber(item.perdaEnergeticaAjustada),
+        parseNumber(item.perdaEnergeticaLimitacoesONS),
+      )
     })
 
     // Adicionar uma margem de 10%
@@ -934,8 +933,8 @@ export default function AnaliseEnergetica() {
     minNegativo = minNegativo * 1.1
 
     // Arredondar para números "fechados" - sempre múltiplos de 1000 ou mais
-    const arredondarParaCima = (valor) => arredondarParaMultiplo(valor, 1000, 'cima')
-    const arredondarParaBaixo = (valor) => arredondarParaMultiplo(Math.abs(valor), 1000, 'baixo') * (valor < 0 ? -1 : 1)
+    const arredondarParaCima = (valor) => arredondarParaMultiplo(valor, 1000, "cima")
+    const arredondarParaBaixo = (valor) => arredondarParaMultiplo(Math.abs(valor), 1000, "baixo") * (valor < 0 ? -1 : 1)
 
     const maxArredondado = arredondarParaCima(maxPositivo)
     const minArredondado = arredondarParaBaixo(minNegativo)
@@ -1341,7 +1340,10 @@ export default function AnaliseEnergetica() {
                   <p className="font-medium">Formato esperado da planilha:</p>
                   <ul className="list-disc list-inside text-sm">
                     <li>A primeira linha deve conter os cabeçalhos das colunas.</li>
-                    <li>As colunas devem incluir: DIN_INSTANTE, COMPLEXO, ENERGIA GERADA (MWH), ENERGIA POTENCIAL (MWH), PERDA ENERGÉTICA POR LIMITAÇÕES ONS (MWH), PERDA ENERGÉTICA AJUSTADA (MWH).</li>
+                    <li>
+                      As colunas devem incluir: DIN_INSTANTE, COMPLEXO, ENERGIA GERADA (MWH), ENERGIA POTENCIAL (MWH),
+                      PERDA ENERGÉTICA POR LIMITAÇÕES ONS (MWH), PERDA ENERGÉTICA AJUSTADA (MWH).
+                    </li>
                     <li>A coluna COMPLEXO deve conter os valores "MOR" ou "PPG".</li>
                     <li>A coluna DIN_INSTANTE deve estar no formato DD/MM/AAAA.</li>
                     <li>As colunas de energia devem conter valores numéricos.</li>
@@ -1351,6 +1353,7 @@ export default function AnaliseEnergetica() {
             </div>
           </CardContent>
         </Card>
-      </Card>
-    )\
-  }
+      </CardContent>
+    </Card>
+  )
+}
